@@ -16,7 +16,11 @@ class Message(object):
 
 class Coder(object):
 
-    def _encode(self, message):
+    def __init__(self):
+        self.logger = logging.getLogger(type(self).__name__)
+
+    def encode(self, message):
+        self.logger.info('Started encoding message "{}"'.format(message))
         bit_size = 1
         curr_char = 0
         encoded_message = ''
@@ -30,12 +34,18 @@ class Coder(object):
             bit_size += 1
         message.text = encoded_message
 
-    def _decode(self, message):
-        pass
+    def decode(self, message):
+        self.logger.info('Started decoding message "{}"'.format(message))
 
     def transform(self, message: Message, times: int = 0):
+        self.logger.info('Started transforming message "{}"'.format(message))
         if times:
-            action = self._decode if times > 0 else self._encode
-            for _ in range(abs(times)):
+            action = self.decode if times > 0 else self.encode
+            self.logger.info('Chose action "{}"'.format(action.__name__))
+            for i in range(abs(times)):
+                self.logger.info('Started iteration {}'.format(i))
                 action(message)
+                self.logger.info('Finished iteration {}'.format(i))
+        self.logger.info('Finished transformation')
+        self.logger.info('Result: "{}"\n'.format(message))
         return message
