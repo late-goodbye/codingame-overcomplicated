@@ -23,6 +23,7 @@ class TestCoder(unittest.TestCase):
         self.coder.transform(message, -1)
         self.assertEqual(message.text, 'worlelhlo d')
 
+        message = Message('hello worlds')
         self.coder.transform(message, -6)
         self.assertEqual(message.text, 'hrlellwo ods')
 
