@@ -1,7 +1,14 @@
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+
 class Message(object):
 
     def __init__(self, text: str = None):
+        self.logger = logging.getLogger(type(self).__name__)
         self.text = text
+        self.logger.info('Set text value to {}'.format(self.text))
 
     def __repr__(self):
         return self.text
