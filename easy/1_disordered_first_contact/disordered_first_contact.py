@@ -20,7 +20,6 @@ class Coder(object):
         self.logger = logging.getLogger(type(self).__name__)
 
     def encode(self, message):
-        self.logger.info('Started encoding message "{}"'.format(message))
         bit_size = 1
         curr_char = 0
         encoded_message = ''
@@ -32,10 +31,12 @@ class Coder(object):
                 encoded_message = bit + encoded_message
             curr_char += bit_size
             bit_size += 1
+        self.logger.info('Encoded message "{}" to "{}"'.format(message, encoded_message))
         message.text = encoded_message
 
     def decode(self, message):
-        self.logger.info('Started decoding message "{}"'.format(message))
+        decoded_message = ''
+        self.logger.info('Decoded message "{}" to "{}"'.format(message, decoded_message))
 
     def transform(self, message: Message, times: int = 0):
         self.logger.info('Started transforming message "{}"'.format(message))
