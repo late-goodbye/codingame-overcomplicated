@@ -31,3 +31,35 @@ measurements on y-axis: 3
   |___|______|__________|
 ```
 Number of squares in sub-rectangles = 4 (one 2x2, one 3x3, two 5x5).
+
+### Input
+
+**Line 1:** Integers **w**, **h**, **countX**, **countY**, separated by space.
+
+**Line 2:** List of measurements on the width side, **countX** integers, separated by space, sorted in asc order.
+
+**Line 3:** List of measurements on the height side, **countY** integers, separated by space, sorted in asc order.
+
+### Output
+
+**Line 1:** the number of squares in sub-rectangles created by the added lines.
+
+### Constraints
+
+1 <= **w**, h <= 20 000
+
+1 <= number of measurements on each axis <= 500
+
+### Example
+
+#### Input
+
+10 5 2 1
+
+2 5
+
+3
+
+#### Output
+
+4
