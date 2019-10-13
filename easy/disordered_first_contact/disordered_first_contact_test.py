@@ -27,12 +27,20 @@ class TestCoder(unittest.TestCase):
         self.coder.transform(message, -6)
         self.assertEqual(message.text, 'hrlellwo ods')
 
+        message = Message('abcdefghi')
+        self.coder.transform(message, -1)
+        self.assertEqual(message.text, 'ghibcadef')
+
+        message = Message('this is a mutliple encoded text')
+        self.coder.transform(message, -5)
+        self.assertEqual(message.text, 'hitoeplmu eneicldts aide  tsxt ')
+
     def test_decode_message(self):
         message = Message('ghibcadef')
         self.coder.transform(message, 1)
-        self.assertEqual(message, 'abcdefghi')
+        self.assertEqual(message.text, 'abcdefghi')
 
-        message = Message('hitoeplmu eneicldts aide  tsxt')
+        message = Message('hitoeplmu eneicldts aide  tsxt ')
         self.coder.transform(message, 5)
         self.assertEqual(message.text, 'this is a mutliple encoded text')
 

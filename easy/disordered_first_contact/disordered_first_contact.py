@@ -1,4 +1,5 @@
 import logging
+from math import floor, sqrt
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -12,6 +13,9 @@ class Message(object):
 
     def __repr__(self):
         return self.text
+
+    def __len__(self):
+        return len(self.text)
 
 
 class Coder(object):
@@ -55,19 +59,45 @@ class Coder(object):
         Let's find k for these cases:
 
         k^2 + k - 2L = 0
-        ...
+        D = 1 + 8L
+        k = (-1 + sqrt(1 + 8L)) / 2
 
-
-
-
-        l + k' = (1 + k) / 2 * n
-        2(l + k') - (1 + k) n = 0
-
-
-
+        So if k is not integer we have to found floor(k)
         """
         decoded_message = ''
-        self.logger.info('Decoded message "{}" to "{}"'.format(message, decoded_message))
+        self.logger.info('Started decoding message {}'.format(message))
+        bits_num = floor((-1 + sqrt(1 + 8 * len(message))) / 2)
+        expected_message_length = int((1 + bits_num) / 2 * bits_num)
+        self.logger.info('The message contains at least {} bits'.format(bits_num))
+        last_bit_length = len(message) - expected_message_length or 0
+
+        head = bits_num % 2 == 0
+        if last_bit_length:
+            self.logger.info('The message has shortened last bit with length {}'.format(last_bit_length))
+            head = not head
+        bit_size = bits_num
+
+        def cut_message(message, head, bit_size):
+            if head:
+                bit, message.text = message.text[:bit_size], message.text[bit_size:]
+            else:
+                message.text, bit = message.text[:-bit_size], message.text[-bit_size:]
+            return bit
+
+        while len(message) > 0:
+            self.logger.info('Message length is {}'.format(len(message)))
+            if last_bit_length:
+                bit = cut_message(message, head, last_bit_length)
+                last_bit_length = 0
+            else:
+                bit = cut_message(message, head, bit_size)
+                bit_size -= 1
+
+            decoded_message = '{}{}'.format(bit, decoded_message)
+            head = not head
+
+        self.logger.info('Decoded message to "{}"'.format(decoded_message))
+        message.text = decoded_message
 
     def transform(self, message: Message, times: int = 0):
         self.logger.info('Started transforming message "{}"'.format(message))
@@ -81,3 +111,10 @@ class Coder(object):
         self.logger.info('Finished transformation')
         self.logger.info('Result: "{}"\n'.format(message))
         return message
+
+
+if __name__ == '__main__':
+    n = int(input())
+    message = Message(input())
+    coder = Coder()
+    print(coder.transform(message, n))
