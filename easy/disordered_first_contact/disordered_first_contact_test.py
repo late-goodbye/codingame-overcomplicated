@@ -1,5 +1,5 @@
 import unittest
-from .disordered_first_contact import Message, Coder
+from easy.disordered_first_contact.disordered_first_contact import Message, Coder
 
 
 class TestMessage(unittest.TestCase):
