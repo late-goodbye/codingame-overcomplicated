@@ -8,6 +8,8 @@ class Rectangle(object):
 
     @property
     def is_square(self):
+        if self.x1 == self.x2 or self.y1 == self.y2:
+            return False
         return abs(self.x2 - self.x1) == abs(self.y2 - self.y1)
 
 
@@ -22,5 +24,22 @@ class Universe(object):
             for x2 in self.x_measurements:
                 for y1 in self.y_measurements:
                     for y2 in self.y_measurements:
-                        if x1 != x2 and y1 != y2:
+                        if x1 < x2 and y1 < y2:
                             yield Rectangle(x1, x2, y1, y2)
+
+    @property
+    def num_squares(self):
+        squares = 0
+        for rectangle in self.rectangles():
+            if rectangle.is_square:
+                squares += 1
+        return squares
+
+
+if __name__ == '__main__':
+    w, h, count_x, count_y = [int(i) for i in input().split()]
+    x = list(map(int, input().split()))
+    y = list(map(int, input().split()))
+
+    universe = Universe(w, h, x, y)
+    print(universe.num_squares)
