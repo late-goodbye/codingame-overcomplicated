@@ -1,78 +1,43 @@
-from abc import abstractmethod, ABC
+from abc import ABC
 from enum import Enum
-import re
 
 
 class Cell(object):
 
     def __init__(self):
-        self.value = 0
+        self.formulae = None
+        self.calculated_value = None
+
+    @property
+    def value(self):
+        return self.calculated_value or self.calculate_value()
+
+    def calculate_value(self):
+        # TODO complete method
+        op, arg1, arg2 = map(self.resolve, self.formulae.split())
+
+    def resolve(self, param):
+        return self.resolve_operator(param) or self.resolve_arg(param) or None
+
+    @staticmethod
+    def resolve_arg(arg):
+        return int(arg) if arg.isdigit() else None
+
+    @staticmethod
+    def resolve_operator(operator):
+        return Operators.get[operator].value or None
 
 
 class Spreadsheet(object):
-
-    def __init__(self, num_cells):
-        self.cells = [Cell() for _ in range(num_cells)]
-        self.cursor = 0
-
-    def apply_formulae(self, formulae):
-        op, arg1, arg2 = map(self.resolve, formulae.split())
-        op.perform(arg1, arg2)
-
-    def resolve_arg(self, arg):
-        m = re.search(r'\$(?P<index>[0-9])+', arg)
-        if m.group('index'):
-            return self.cells[int(m.group('index'))]
-        return int(arg)
-
-    @staticmethod
-    def resolve_operation(operation):
-        if operation in Operations.__members__:
-            return Operations[operation].value
-        return None
-
-    def resolve(self, attr):
-        return self.resolve_operation(attr) or self.resolve_arg(attr)
+    pass
 
 
-class Operation(ABC):
-
-    @classmethod
-    @abstractmethod
-    def perform(cls, cell: Cell, arg1: int, arg2: int):
-        pass
+class Operator(ABC):
+    pass
 
 
-class SetValue(Operation):
-
-    @classmethod
-    def perform(cls, cell: Cell, arg1: int, arg2: int):
-        cell.value = arg1
-
-
-class Addition(Operation):
-
-    @classmethod
-    def perform(cls, cell: Cell, arg1: int, arg2: int):
-        cell.value = arg1 + arg2
-
-
-class Subtraction(Operation):
-
-    @classmethod
-    def perform(cls, cell: Cell, arg1: int, arg2: int):
-        cell.value = arg1 - arg2
-
-
-class Multiplication(Operation):
-
-    @classmethod
-    def perform(cls, cell: Cell, arg1: int, arg2: int):
-        cell.value = arg1 * arg2
-
-
-class Operations(Enum):
-    VALUE = SetValue
-    ADD = Addition
-    SUB = Subtraction
-    MULT = Multiplication
+class Operators(Enum):
+    VALUE = 1
+    ADD = 2
+    SUB = 3
+    MULT = 4
