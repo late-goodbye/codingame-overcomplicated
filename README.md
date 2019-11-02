@@ -12,3 +12,4 @@ I think this is a great opportunity for practice.
 
 * [Disordered First Contact](https://github.com/late-goodbye/codingame-overcomplicated/tree/master/easy/disordered_first_contact)
 * [Rectangle Partition](https://github.com/late-goodbye/codingame-overcomplicated/tree/master/easy/rectangle_partition)
+* [Spreadsheet 1D](https://github.com/late-goodbye/codingame-overcomplicated/tree/master/easy/spreadsheet_1d)
