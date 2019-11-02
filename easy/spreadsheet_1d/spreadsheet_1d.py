@@ -101,4 +101,9 @@ class Operations(Enum):
 
 
 if __name__ == '__main__':
-    pass
+    data = [input()]
+    for _ in range(int(data[0])):
+        data.append(input())
+    spreadsheet = Spreadsheet(data)
+    for cell_value in spreadsheet:
+        print(cell_value)
