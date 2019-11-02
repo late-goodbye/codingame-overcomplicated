@@ -59,7 +59,7 @@ class Spreadsheet:
         m = re.search(r'\$(?P<cell_index>[0-9]+)', arg)
         if m:
             return self._calculate_value(int(m.group('cell_index')))
-        return int(arg) if arg.isdigit() else None
+        return int(arg) if arg.lstrip('-').isdigit() else None
 
 
 class Operation(ABC):
