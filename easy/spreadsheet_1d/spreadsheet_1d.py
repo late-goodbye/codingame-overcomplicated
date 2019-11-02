@@ -20,57 +20,76 @@ class Cell:
 
 
 class Spreadsheet:
-    def __init__(self, num_cells):
+    def __init__(self, input_data):
+        if not isinstance(input_data, list):
+            input_data = [
+                x for x in map(str.strip, input_data.split('\n')) if x]
+        num_cells, formulas = int(input_data[0]), input_data[1:]
         self.cells = [Cell() for _ in range(num_cells)]
+        self._apply_formulas(formulas)
+        self._cursor = 0
 
-    def apply_formulas(self, formulas):
-        for formulae, cell in zip(formulas.split('\n'), self.cells):
+    def _apply_formulas(self, formulas):
+        for formulae, cell in zip(formulas, self.cells):
             cell.formulae = formulae
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._cursor == len(self.cells):
+            raise StopIteration
+        else:
+            self._cursor += 1
+            return self._calculate_value(self._cursor-1)
+
     @cached
-    def calculate_value(self, cell_index):
-
+    def _calculate_value(self, cell_index):
         formulae = self.cells[cell_index].formulae
-        operation, arg1, arg2 = self.parse_formulae(formulae)
+        operation, arg1, arg2 = self._parse_formulae(formulae)
+        return operation.perform(arg1, arg2)
 
-        return operation(arg1, arg2)
-
-    def parse_formulae(self, formulae):
+    def _parse_formulae(self, formulae):
         operation, arg1, arg2 = formulae.split()
-        arg1, arg2 = map(self.parse_arg, (arg1, arg2))
-        operation = Operations.__members__[operation]
+        arg1, arg2 = map(self._parse_arg, (arg1, arg2))
+        operation = Operations.__members__[operation].value
         return operation, arg1, arg2
 
-    def parse_arg(self, arg):
+    def _parse_arg(self, arg):
         m = re.search(r'\$(?P<cell_index>[0-9]+)', arg)
         if m:
-            return self.calculate_value(int(m.group('cell_index')))
-        return int(arg) if arg.isdigit else None
+            return self._calculate_value(int(m.group('cell_index')))
+        return int(arg) if arg.isdigit() else None
 
 
 class Operation(ABC):
+    @staticmethod
     @abstractmethod
-    def perform(self, arg1, arg2):
+    def perform(arg1, arg2):
         pass
 
 
 class SetValue(Operation):
-    def perform(self, arg1, arg2):
+    @staticmethod
+    def perform(arg1, arg2):
         return arg1
 
 
 class Addition(Operation):
-    def perform(self, arg1, arg2):
+    @staticmethod
+    def perform(arg1, arg2):
         return arg1 + arg2
 
 
 class Subtraction(Operation):
-    def perform(self, arg1, arg2):
+    @staticmethod
+    def perform(arg1, arg2):
         return arg1 - arg2
 
 
 class Multiplication(Operation):
-    def perform(self, arg1, arg2):
+    @staticmethod
+    def perform(arg1, arg2):
         return arg1 * arg2
 
 
@@ -79,6 +98,7 @@ class Operations(Enum):
     ADD = Addition
     SUB = Subtraction
     MULT = Multiplication
+
 
 if __name__ == '__main__':
     pass
